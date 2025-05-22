@@ -18,8 +18,8 @@ file(GLOB sources
     src/*.hpp
 )
 file(GLOB headers
-    src/*.h
-    src/*.hpp
+    include/*.h
+    include/*.hpp
 )
 add_executable(main ${sources} ${headers})
 target_compile_features(main PRIVATE cxx_std_23)
