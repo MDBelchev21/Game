@@ -1,12 +1,7 @@
 #pragma once
-#include <array>
-#include <vector>
-#include <cmath>
-#include <optional>
-#include <ranges>
-#include <algorithm>
 
-#include <SFML/Graphics.hpp>
+#include "../include/precompile.hpp"
+
 
 class CollisionDetector {
 public:
