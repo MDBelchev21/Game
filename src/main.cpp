@@ -2,5 +2,5 @@
 
 int main()
 {
-    App app;
+    auto app = new App();
 }

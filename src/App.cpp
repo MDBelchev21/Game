@@ -5,12 +5,12 @@ App::App() {
     window.setFramerateLimit(144);
 
     background = sf::RectangleShape({1920.f,1080.f});
-    background.setFillColor(sf::Color::White);
+    background.setFillColor(sf::Color::Black);
 
-    display(window);
+    update(window);
 }
 
-void App::display(sf::RenderWindow& window) {
+void App::update(sf::RenderWindow& window) {
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -20,11 +20,11 @@ void App::display(sf::RenderWindow& window) {
                 window.close();
             }
         }
-        update(window);
+        display(window);
     }
 }
 
-void App::update(sf::RenderWindow& window) {
+void App::display(sf::RenderWindow& window) {
     window.clear();
     window.draw(background);
     window.display();

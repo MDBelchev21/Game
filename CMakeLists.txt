@@ -17,10 +17,7 @@ file(GLOB sources
     src/*.h
     src/*.hpp
 )
-file(GLOB headers
-    include/*.h
-    include/*.hpp
-)
-add_executable(main ${sources} ${headers})
+
+add_executable(main ${sources})
 target_compile_features(main PRIVATE cxx_std_23)
 target_link_libraries(main PRIVATE SFML::Graphics)
