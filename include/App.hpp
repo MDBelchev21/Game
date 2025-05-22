@@ -6,14 +6,15 @@
 class App {
 public:
     App();
-private:
+
     void Run();
 
+private:
     sf::RectangleShape background;
     sf::Clock clock;
-    State state;
+    State* state;
 
 public:
-    Utils::Event<void, State&> onUpdate;
-    Utils::Event<void, State&> onDisplay;
+    Utils::Event<void, State*&> onUpdate;
+    Utils::Event<void, State*&> onDisplay;
 };

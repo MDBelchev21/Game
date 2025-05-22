@@ -1,26 +1,33 @@
 #include "../include/App.hpp"
 
-App::App() {
-    this->state.window = sf::RenderWindow(sf::VideoMode({1920, 1080}), "CMake SFML Project", sf::State::Windowed);
-    this->state.window.setFramerateLimit(144);
+#include "../include/Circle.h"
 
-    Run();
+App::App() {
+    this->state = new State();
+    this->state->window = new sf::RenderWindow;
+    this->state->window->create(
+        sf::VideoMode::getDesktopMode(),
+        "SFML Game",
+        sf::State::Fullscreen
+    );
+
+    this->state->renderObjects.push_back(new Circle(50.f));
 }
 
 void App::Run() {
-    auto& window = this->state.window;
+    auto& window = this->state->window;
 
-    while (window.isOpen())
+    while (window->isOpen())
     {
-        while (const std::optional event = window.pollEvent())
+        while (const std::optional event = window->pollEvent())
         {
             if (event->is<sf::Event::Closed>())
             {
-                window.close();
+                window->close();
             }
         }
 
-        this->state.updateTiming(clock.restart().asSeconds());
+        this->state->updateTiming(clock.restart().asSeconds());
         this->onUpdate.Invoke(this->state);
         this->onDisplay.Invoke(this->state);
     }
