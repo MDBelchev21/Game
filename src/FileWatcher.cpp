@@ -1,12 +1,11 @@
 //
 // Created by Ivaylo on 22.5.2025 г..
 //
-
 #include "../include/FileWatcher.h"
 
 namespace Utils {
 
-FileWatcher::FileWatcher(std::string  dir) : m_dir(std::move(dir)) {}
+FileWatcher::FileWatcher(std::filesystem::path  dir) : m_dir(std::move(dir)) {}
 
 void FileWatcher::watch(const std::stop_token &stoken, std::atomic<bool> &needsReload) {
     while (!stoken.stop_requested()) {

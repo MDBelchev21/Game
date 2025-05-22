@@ -1,16 +1,15 @@
 #include "../include/App.hpp"
 
 App::App() {
-    auto window = sf::RenderWindow(sf::VideoMode({1920, 1080}), "CMake SFML Project", sf::State::Windowed);
-    window.setFramerateLimit(144);
+    this->state.window = sf::RenderWindow(sf::VideoMode({1920, 1080}), "CMake SFML Project", sf::State::Windowed);
+    this->state.window.setFramerateLimit(144);
 
-    background = sf::RectangleShape({1920.f,1080.f});
-    background.setFillColor(sf::Color::Black);
-
-    update(window);
+    Run();
 }
 
-void App::update(sf::RenderWindow& window) {
+void App::Run() {
+    auto& window = this->state.window;
+
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -20,13 +19,9 @@ void App::update(sf::RenderWindow& window) {
                 window.close();
             }
         }
-        display(window);
+
+        this->state.updateTiming(clock.restart().asSeconds());
+        this->onUpdate.Invoke(this->state);
+        this->onDisplay.Invoke(this->state);
     }
 }
-
-void App::display(sf::RenderWindow& window) {
-    window.clear();
-    window.draw(background);
-    window.display();
-}
-

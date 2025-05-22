@@ -1,12 +1,19 @@
 #pragma once
+#include "Event.h"
+#include "State.h"
 #include "../include/precompile.hpp"
 
 class App {
 public:
     App();
 private:
-    void update(sf::RenderWindow& window);
-    void display(sf::RenderWindow& window);
+    void Run();
 
     sf::RectangleShape background;
+    sf::Clock clock;
+    State state;
+
+public:
+    Utils::Event<void, State&> onUpdate;
+    Utils::Event<void, State&> onDisplay;
 };
