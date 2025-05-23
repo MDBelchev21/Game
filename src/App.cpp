@@ -3,31 +3,30 @@
 #include "../include/Circle.h"
 
 App::App() {
-    this->state = new State();
-    this->state->window = new sf::RenderWindow;
-    this->state->window->create(
+    this->state = State();
+    this->state.window = sf::RenderWindow(
         sf::VideoMode::getDesktopMode(),
         "SFML Game",
         sf::State::Fullscreen
-    );
+        );
 
-    this->state->renderObjects.push_back(new Circle(50.f));
+    this->state.renderObjects.push_back(new Circle(50.f));
 }
 
 void App::Run() {
-    auto& window = this->state->window;
+    auto& window = this->state.window;
 
-    while (window->isOpen())
+    while (window.isOpen())
     {
-        while (const std::optional event = window->pollEvent())
+        while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
             {
-                window->close();
+                window.close();
             }
         }
 
-        this->state->updateTiming(clock.restart().asSeconds());
+        this->state.updateTiming(clock.restart().asSeconds());
         this->onUpdate.Invoke(this->state);
         this->onDisplay.Invoke(this->state);
     }

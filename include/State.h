@@ -11,7 +11,7 @@ public:
     float deltaTime;
     float totalTime;
 
-    sf::RenderWindow* window{};
+    sf::RenderWindow window{};
     Circle circle{50.0f};
 
     std::vector<RenderObject*> renderObjects;
@@ -20,5 +20,4 @@ public:
         deltaTime = dt;
         totalTime += dt;
     }
-
 };

@@ -18,18 +18,18 @@ int main()
 
     auto app = new App();
 
-    app->onUpdate.Attach([](State*& state) {
+    app->onUpdate.Attach([](State& state) {
         std::cout << "Updating..." << std::endl;
-        state->renderObjects[0]->move(state->deltaTime * 100.f * sf::Vector2f(1,0));
+        state.renderObjects[0]->move(state.deltaTime * 100.f * sf::Vector2f(1,0));
     });
 
-    app->onDisplay.Attach([](State*& state) {
+    app->onDisplay.Attach([](State& state) {
         std::cout << "Drawing..." << std::endl;
-        state->window->clear(sf::Color::Blue);
-        for (auto& obj : state->renderObjects) {
-            obj->draw(*state->window);
+        state.window.clear(sf::Color::Blue);
+        for (const auto& obj : state.renderObjects) {
+            obj->draw(state.window);
         }
-        state->window->display();
+        state.window.display();
     });
     app->Run();
 
