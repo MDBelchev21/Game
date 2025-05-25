@@ -4,18 +4,17 @@
 
 App::App() {
     this->state = State();
-    this->state.window = sf::RenderWindow(
-        sf::VideoMode::getDesktopMode(),
+    this->window = sf::RenderWindow(
+        sf::VideoMode({1280, 720}),
         "SFML Game",
-        sf::State::Fullscreen
+        sf::Style::Titlebar | sf::Style::Close
         );
 
     this->state.renderObjects.push_back(new Circle(50.f));
+    this->state.outstream = std::cout.rdbuf();
 }
 
 void App::Run() {
-    auto& window = this->state.window;
-
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -26,8 +25,14 @@ void App::Run() {
             }
         }
 
+
         this->state.updateTiming(clock.restart().asSeconds());
-        this->onUpdate.Invoke(this->state);
-        this->onDisplay.Invoke(this->state);
+
+        {
+            std::lock_guard<std::mutex> lock(this->reloadMutex);
+            this->onUpdate.Invoke(&this->state);
+        }
+
+        this->onDisplay.Invoke(this->state, window);
     }
 }

@@ -15,7 +15,7 @@ public:
     explicit FileWatcher(std::filesystem::path  dir);
     ~FileWatcher() = default;
 
-    void watch(const std::stop_token &stoken, std::atomic<bool>& needsReload);
+    void watch(const std::stop_token &stoken);
 
 private:
     std::filesystem::path m_dir;

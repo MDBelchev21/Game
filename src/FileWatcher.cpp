@@ -3,11 +3,13 @@
 //
 #include "../include/FileWatcher.h"
 
+#include <thread>
+
 namespace Utils {
 
 FileWatcher::FileWatcher(std::filesystem::path  dir) : m_dir(std::move(dir)) {}
 
-void FileWatcher::watch(const std::stop_token &stoken, std::atomic<bool> &needsReload) {
+void FileWatcher::watch(const std::stop_token &stoken) {
     while (!stoken.stop_requested()) {
         for (const auto &entry : std::filesystem::directory_iterator(m_dir)) {
             if (entry.is_regular_file()) {
@@ -15,7 +17,6 @@ void FileWatcher::watch(const std::stop_token &stoken, std::atomic<bool> &needsR
                 if (lastWriteTime > m_lastWriteTime) {
                     m_lastWriteTime = lastWriteTime;
                     onFileChanged.Invoke();
-                    needsReload.store(true);
                 }
             }
         }

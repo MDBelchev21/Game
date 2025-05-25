@@ -3,7 +3,12 @@
 //
 
 #define EXPORT extern "C" __declspec(dllexport)
+#include <iostream>
 
-EXPORT void onUpdate(State& state) {
+#include "../../include/State.h"
 
+EXPORT void onUpdate(State* state) {
+    if (!state->renderObjects.empty() && state->renderObjects[0] != nullptr) {
+        state->renderObjects[0]->move(state->deltaTime * 100.f * sf::Vector2f(1,1));
+    }
 }

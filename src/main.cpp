@@ -2,34 +2,46 @@
 
 #include "../include/App.hpp"
 #include "../include/FileWatcher.h"
+#include "../include/SharedLibrary.h"
+
+#define DLLPATH "../../src/game/build/bin/Debug/game.dll"
 
 int main()
 {
+    using OnUpdateType = std::function<void(State*)>;
+
     Utils::FileWatcher fileWatcher("../../src/game");
-    std::atomic<bool> needsReload(false);
+    OnUpdateType onUpdate;
 
-    fileWatcher.onFileChanged.Attach([]() {
-        std::cout << "File changed, reloading..." << std::endl;
-    });
-
-    std::jthread watcherThread([&fileWatcher, &needsReload](const std::stop_token& stoken) {
-        fileWatcher.watch(stoken, needsReload);
-    });
+    Utils::SharedLibrary sharedLibrary(DLLPATH);
 
     auto app = new App();
 
-    app->onUpdate.Attach([](State& state) {
-        std::cout << "Updating..." << std::endl;
-        state.renderObjects[0]->move(state.deltaTime * 100.f * sf::Vector2f(1,0));
+    fileWatcher.onFileChanged.Attach([&sharedLibrary, &onUpdate, &app]() {
+        // Unload the current shared library and clear the function pointer
+        std::lock_guard<std::mutex> lock(app->reloadMutex);
+
+        onUpdate = nullptr;
+        app->onUpdate.DetachAll();
+        sharedLibrary.unload();
+
+        // Rebuild and reload the shared library
+        system("cmake --build ../../src/game/build");
+        sharedLibrary.load(DLLPATH);
+        onUpdate = OnUpdateType(sharedLibrary.loadSymbol<void(*)(State*)>("onUpdate"));
+        app->onUpdate.Attach(onUpdate);
     });
 
-    app->onDisplay.Attach([](State& state) {
-        std::cout << "Drawing..." << std::endl;
-        state.window.clear(sf::Color::Blue);
-        for (const auto& obj : state.renderObjects) {
-            obj->draw(state.window);
+    std::jthread watcherThread([&fileWatcher](const std::stop_token& stoken) {
+        fileWatcher.watch(stoken);
+    });
+
+    app->onDisplay.Attach([](State& state, sf::RenderWindow& window) {
+        window.clear(sf::Color::Blue);
+        for (auto* obj : state.renderObjects) {
+            obj->draw(window);
         }
-        state.window.display();
+        window.display();
     });
     app->Run();
 

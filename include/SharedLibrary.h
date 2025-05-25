@@ -10,20 +10,11 @@ namespace Utils {
 class SharedLibrary {
 public:
     explicit SharedLibrary(const std::string& path) {
-        handle = LoadLibraryA(path.c_str());
-        if (!handle) {
-            std::stringstream ss;
-            ss << "Failed to load library: " << path << ", Error: " << GetLastError();
-            throw std::runtime_error(ss.str());
-        }
-        std::cout << "Loaded library: " << path << std::endl;
+        load(path);
     }
 
     ~SharedLibrary() {
-        if (handle) {
-            FreeLibrary(static_cast<HMODULE>(handle));
-            std::cout << "Unloaded library" << std::endl;
-        }
+        unload();
     }
 
     template<typename T>
@@ -37,8 +28,24 @@ public:
         return reinterpret_cast<T>(symbol);
     }
 
+    void unload() {
+        if (handle) {
+            FreeLibrary(static_cast<HMODULE>(handle));
+            handle = nullptr;
+        }
+    }
+
+    void load(const std::string& path) {
+        handle = LoadLibraryA(path.c_str());
+        if (!handle) {
+            std::stringstream ss;
+            ss << "Failed to load library: " << path << ", Error: " << GetLastError();
+            throw std::runtime_error(ss.str());
+        }
+    }
+
 private:
-    void* handle;
+    void* handle{};
 };
 
 } // Utils
